@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Local Community Event Portal</title>
+    <style>
+        /* Existing styles */
+
+        #welcomeBanner {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .highlight {
+            background-color: #FFF3CD;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 4px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding-left: 0;
+            display: flex;
+            gap: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 12px 20px;
+            border-radius: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: 600;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        footer {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 12px;
+            background-color: #f0f0f0;
+            margin-top: 40px;
+            border-radius: 8px;
+            color: #555;
+            font-size: 0.9em;
+        }
+
+        #gallery table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 15px;
+            margin-top: 20px;
+        }
+
+        .event-image {
+            width: 100%;
+            max-width: 150px;
+            border: 3px solid #007BFF;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .event-image.enlarged {
+            transform: scale(2);
+            z-index: 10;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        figure {
+            text-align: center;
+            margin: 0;
+        }
+
+        figcaption {
+            margin-top: 8px;
+            font-style: italic;
+            font-size: 0.9em;
+            color: #333;
+        }
+
+        #registrationForm {
+            max-width: 500px;
+            background-color: #f7f9fc;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+
+        #registrationForm label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        #registrationForm input[type="text"],
+        #registrationForm input[type="email"],
+        #registrationForm input[type="date"],
+        #registrationForm select,
+        #registrationForm textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        #registrationForm input[type="text"]:focus,
+        #registrationForm input[type="email"]:focus,
+        #registrationForm input[type="date"]:focus,
+        #registrationForm select:focus,
+        #registrationForm textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px #007BFF;
+        }
+
+        #registrationForm button {
+            background-color: #007BFF;
+            color: white;
+            font-weight: 700;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        #registrationForm button:hover {
+            background-color: #0056b3;
+        }
+
+        #formOutput {
+            margin-top: 15px;
+            font-weight: 700;
+            color: #28a745;
+        }
+
+        /* Event Feedback Form styles */
+
+        #feedbackForm {
+            max-width: 500px;
+            background-color: #fefefe;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 40px;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        #feedbackForm label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        #feedbackForm input[type="text"],
+        #feedbackForm select,
+        #feedbackForm textarea {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        #feedbackForm input[type="text"]:focus,
+        #feedbackForm select:focus,
+        #feedbackForm textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+            box-shadow: 0 0 5px #007BFF;
+        }
+
+        #feedbackForm button {
+            background-color: #28a745;
+            color: white;
+            font-weight: 700;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        #feedbackForm button:hover {
+            background-color: #1e7e34;
+        }
+
+        #phoneError {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        #eventFee {
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #e9f7ef;
+            border: 1px solid #28a745;
+            border-radius: 5px;
+            color: #155724;
+        }
+
+        #charCount {
+            font-size: 0.9em;
+            color: #666;
+            text-align: right;
+            margin-top: -12px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="help.html" target="_blank">Help</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main -->
+    <main>
+        <section id="home">
+            <div id="welcomeBanner">
+                Welcome back, <span class="highlight">Community Member!</span>
+                Enjoy our <span style="color: red; font-weight: bold;">special offer</span> just for you!
+            </div>
+
+            <h1 class="highlight">Welcome to the Local Community Event Portal</h1>
+            <p>Find and register for local events, check locations, and access basic services.</p>
+        </section>
+
+        <section id="events">
+            <h2>Upcoming Events</h2>
+            <p>Details about upcoming events will be listed here.</p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>Information on how to contact the city council will be provided here.</p>
+        </section>
+
+        <section id="gallery">
+            <h2>Community Event Gallery</h2>
+            <table>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="event1.jpg" alt="Spring Festival 2023" title="Spring Festival 2023" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Spring Festival 2023</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="event2.jpg" alt="Summer Concert Series" title="Summer Concert Series" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Summer Concert Series</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="event3.jpg" alt="Community Clean-Up Day" title="Community Clean-Up Day" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Community Clean-Up Day</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <figure>
+                            <img src="event4.jpg" alt="Farmers Market" title="Farmers Market" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Farmers Market</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="event5.jpg" alt="Art in the Park" title="Art in the Park" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Art in the Park</figcaption>
+                        </figure>
+                    </td>
+                    <td>
+                        <figure>
+                            <img src="event6.jpg" alt="Holiday Parade" title="Holiday Parade" class="event-image" ondblclick="toggleImageSize(this)" />
+                            <figcaption>Holiday Parade</figcaption>
+                        </figure>
+                    </td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="registration">
+            <h2>Register for an Event</h2>
+            <form id="registrationForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Your full name" required autofocus />
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+                <label for="date">Event Date:</label>
+                <input type="date" id="date" name="date" required />
+
+                <label for="eventType">Event Type:</label>
+                <select id="eventType" name="eventType" required>
+                    <option value="" disabled selected>Select an event</option>
+                    <option value="seminar">Seminar</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="festival">Festival</option>
+                    <option value="community_meeting">Community Meeting</option>
+                </select>
+
+                <label for="message">Message (optional):</label>
+                <textarea id="message" name="message" placeholder="Any special notes or questions..." rows="4"></textarea>
+
+                <button type="submit">Submit Registration</button>
+
+                <output id="formOutput" for="registrationForm"></output>
+            </form>
+        </section>
+
+        <section id="feedback">
+            <h2>Event Feedback</h2>
+            <form id="feedbackForm">
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phone" placeholder="e.g. 123-456-7890" onblur="validatePhone()" />
+
+                <div id="phoneError">Please enter a valid phone number (e.g. 123-456-7890).</div>
+
+                <label for="eventSelect">Select Event:</label>
+                <select id="eventSelect" name="eventSelect" onchange="displayFee()">
+                    <option value="" disabled selected>Select an event</option>
+                    <option value="seminar" data-fee="50">Seminar</option>
+                    <option value="workshop" data-fee="75">Workshop</option>
+                    <option value="festival" data-fee="30">Festival</option>
+                    <option value="community_meeting" data-fee="Free">Community Meeting</option>
+                </select>
+
+                <div id="eventFee"></div>
+
+                <label for="feedbackMessage">Feedback:</label>
+                <textarea id="feedbackMessage" name="feedbackMessage" rows="5" placeholder="Your feedback here..." onkeydown="countChars()" onkeyup="countChars()" onkeypress="countChars()"></textarea>
+                <div id="charCount">Characters: 0</div>
+
+                <button type="button" onclick="submitFeedback()">Submit Feedback</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Local Community Event Portal. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Registration form submission confirmation
+        document.getElementById('registrationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = this.name.value.trim();
+            const email = this.email.value.trim();
+            const date = this.date.value;
+            const eventTypeSelect = this.eventType;
+            const eventTypeText = eventTypeSelect.options[eventTypeSelect.selectedIndex].text;
+            const message = this.message.value.trim();
+
+            let confirmationMessage = `Thank you, ${name}, for registering for the ${eventTypeText} on ${date}.`;
+            if(message) {
+                confirmationMessage += `\nYour message: "${message}"`;
+            }
+
+            const output = document.getElementById('formOutput');
+            output.textContent = confirmationMessage;
+
+            this.reset();
+            this.name.focus();
+        });
+
+        // Phone validation on blur
+        function validatePhone() {
+            const phoneInput = document.getElementById('phone');
+            const phoneError = document.getElementById('phoneError');
+            const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
+            if (phoneInput.value.trim() === '' || phonePattern.test(phoneInput.value.trim())) {
+                phoneError.style.display = 'none';
+                return true;
+            } else {
+                phoneError.style.display = 'block';
+                phoneInput.focus();
+                return false;
+            }
+        }
+
+        // Display event fee onchange
+        function displayFee() {
+            const select = document.getElementById('eventSelect');
+            const feeDisplay = document.getElementById('eventFee');
+            const selectedOption = select.options[select.selectedIndex];
+            const fee = selectedOption.getAttribute('data-fee');
+            if (fee) {
+                feeDisplay.textContent = 'Event Fee: ' + fee;
+            } else {
+                feeDisplay.textContent = '';
+            }
+        }
+
+        // Submit feedback button onclick confirmation
+        function submitFeedback() {
+            if (!validatePhone()) {
+                return;
+            }
+            const select = document.getElementById('eventSelect');
+            if (!select.value) {
+                alert('Please select an event.');
+                select.focus();
+                return;
+            }
+            alert('Thank you for your feedback!');
+            document.getElementById('feedbackForm').reset();
+            document.getElementById('charCount').textContent = 'Characters: 0';
+            document.getElementById('eventFee').textContent = '';
+        }
+
+        // Image double click to enlarge toggle
+        function toggleImageSize(imgElement) {
+            imgElement.classList.toggle('enlarged');
+        }
+
+        // Feedback textarea character count on key events
+        function countChars() {
+            const feedback = document.getElementById('feedbackMessage');
+            const countDisplay = document.getElementById('charCount');
+            countDisplay.textContent = `Characters: ${feedback.value.length}`;
+        }
+    </script>
+</body>
+</html>

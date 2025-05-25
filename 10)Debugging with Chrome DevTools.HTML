@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Local Community Event Portal</title>
+<style>
+    /* Welcome banner */
+    #welcomeBanner {
+        background-color: #007BFF;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-family: Arial, sans-serif;
+    }
+    /* Highlight class */
+    .highlight {
+        background-color: #FFF3CD;
+        font-weight: bold;
+        padding: 3px 6px;
+        border-radius: 4px;
+    }
+    nav ul {
+        list-style-type: none;
+        padding-left: 0;
+        display: flex;
+        gap: 20px;
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        margin: 0;
+        padding: 12px 20px;
+        border-radius: 8px;
+    }
+    nav a {
+        text-decoration: none;
+        color: #007BFF;
+        font-weight: 600;
+    }
+    nav a:hover {
+        text-decoration: underline;
+    }
+    main {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+    }
+    footer {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 12px;
+        background-color: #f0f0f0;
+        margin-top: 40px;
+        border-radius: 8px;
+        color: #555;
+        font-size: 0.9em;
+    }
+    #gallery table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 15px;
+        margin-top: 20px;
+    }
+    .event-image {
+        width: 100%;
+        max-width: 150px;
+        border: 3px solid #007BFF;
+        border-radius: 8px;
+        display: block;
+        margin: 0 auto;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+    .event-image.enlarged {
+        transform: scale(2);
+        z-index: 10;
+        position: relative;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+    figure {
+        text-align: center;
+        margin: 0;
+    }
+    figcaption {
+        margin-top: 8px;
+        font-style: italic;
+        font-size: 0.9em;
+        color: #333;
+    }
+    #registrationForm, #feedbackForm, #geolocationSection {
+        max-width: 500px;
+        background-color: #f7f9fc;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 40px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        font-family: Arial, sans-serif;
+    }
+    #registrationForm label, #feedbackForm label, #geolocationSection label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 700;
+    }
+    #registrationForm input[type="text"],
+    #registrationForm input[type="email"],
+    #registrationForm input[type="date"],
+    #registrationForm select,
+    #registrationForm textarea,
+    #feedbackForm input[type="text"],
+    #feedbackForm select,
+    #feedbackForm textarea {
+        width: 100%;
+        padding: 8px 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 1em;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease;
+    }
+    #registrationForm input[type="text"]:focus,
+    #registrationForm input[type="email"]:focus,
+    #registrationForm input[type="date"]:focus,
+    #registrationForm select:focus,
+    #registrationForm textarea:focus,
+    #feedbackForm input[type="text"]:focus,
+    #feedbackForm select:focus,
+    #feedbackForm textarea:focus {
+        border-color: #007BFF;
+        outline: none;
+        box-shadow: 0 0 5px #007BFF;
+    }
+    #registrationForm button, #clearPrefsButton, #findNearbyBtn {
+        background-color: #007BFF;
+        color: white;
+        font-weight: 700;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+    }
+    #registrationForm button:hover, #clearPrefsButton:hover, #findNearbyBtn:hover {
+        background-color: #0056b3;
+    }
+    #formOutput {
+        margin-top: 15px;
+        font-weight: 700;
+        color: #28a745;
+        white-space: pre-wrap;
+    }
+    #feedbackForm button {
+        background-color: #28a745;
+        color: white;
+        font-weight: 700;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+    }
+    #feedbackForm button:hover {
+        background-color: #1e7e34;
+    }
+    #phoneError {
+        color: red;
+        font-size: 0.9em;
+        margin-top: -12px;
+        margin-bottom: 12px;
+        display: none;
+    }
+    #eventFee {
+        font-weight: 700;
+        margin-bottom: 15px;
+        padding: 10px;
+        background-color: #e9f7ef;
+        border: 1px solid #28a745;
+        border-radius: 5px;
+        color: #155724;
+    }
+    #charCount {
+        font-size: 0.9em;
+        color: #666;
+        text-align: right;
+        margin-top: -12px;
+        margin-bottom: 15px;
+    }
+    /* Video section styling */
+    #videoSection {
+        max-width: 700px;
+        margin: 40px auto;
+        text-align: center;
+        font-family: Arial, sans-serif;
+    }
+    #promoVideo {
+        width: 100%;
+        max-width: 700px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    #videoStatus {
+        margin-top: 10px;
+        font-weight: 700;
+        color: #007BFF;
+    }
+    /* Geolocation display */
+    #geoOutput {
+        margin-top: 15px;
+        font-weight: 700;
+        color: #333;
+        white-space: pre-wrap;
+    }
+    #geoError {
+        margin-top: 10px;
+        color: red;
+        font-weight: 700;
+    }
+    /* Debug styles */
+    .debug-outline * {
+        outline: 1px solid rgba(255, 0, 0, 0.3);
+    }
+    .debug-grid {
+        background-image: linear-gradient(rgba(0, 0, 255, 0.1) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(0, 0, 255, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+    }
+    #debugControls {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        background: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        font-family: Arial, sans-serif;
+    }
+    #debugInfo {
+        display: none;
+        margin-top: 10px;
+        font-family: monospace;
+        font-size: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        padding: 5px;
+        border-radius: 3px;
+    }
+    #debugControls button {
+        background: #333;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-right: 5px;
+    }
+    #debugControls button:hover {
+        background: #555;
+    }
+</style>
+</head>
+<body>
+<!-- Debug Controls -->
+<div id="debugControls">
+    <button id="toggleDebug">Debug Mode</button>
+    <button id="toggleOutlines">Toggle Outlines</button>
+    <button id="toggleGrid">Toggle Grid</button>
+    <div id="debugInfo"></div>
+</div>
+
+<!-- Navigation -->
+<nav>
+    <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="help.html" target="_blank">Help</a></li>
+    </ul>
+</nav>
+
+<!-- Main -->
+<main>
+    <section id="home">
+        <div id="welcomeBanner">
+            Welcome back, <span class="highlight">Community Member!</span>
+            Enjoy our <span style="color: red; font-weight: bold;">special offer</span> just for you!
+        </div>
+        <h1 class="highlight">Welcome to the Local Community Event Portal</h1>
+        <p>Find and register for local events, check locations, and access basic services.</p>
+    </section>
+
+    <section id="events">
+        <h2>Upcoming Events</h2>
+        <p>Details about upcoming events will be listed here.</p>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>Information on how to contact the city council will be provided here.</p>
+    </section>
+
+    <section id="gallery">
+        <h2>Community Event Gallery</h2>
+        <table>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="event1.jpg" alt="Spring Festival 2023" title="Spring Festival 2023" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Spring Festival 2023</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="event2.jpg" alt="Summer Concert Series" title="Summer Concert Series" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Summer Concert Series</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="event3.jpg" alt="Community Clean-Up Day" title="Community Clean-Up Day" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Community Clean-Up Day</figcaption>
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="event4.jpg" alt="Farmers Market" title="Farmers Market" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Farmers Market</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="event5.jpg" alt="Art in the Park" title="Art in the Park" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Art in the Park</figcaption>
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="event6.jpg" alt="Holiday Parade" title="Holiday Parade" class="event-image" ondblclick="toggleImageSize(this)" />
+                        <figcaption>Holiday Parade</figcaption>
+                    </figure>
+                </td>
+            </tr>
+        </table>
+    </section>
+
+    <section id="videoSection">
+        <h2>Event Promo Video</h2>
+        <video id="promoVideo" controls oncanplay="showVideoReadyMessage()">
+            <source src="promo.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+        <div id="videoStatus"></div>
+    </section>
+
+    <section id="registration">
+        <h2>Register for an Event</h2>
+        <form id="registrationForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Your full name" required autofocus />
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required />
+
+            <label for="date">Event Date:</label>
+            <input type="date" id="date" name="date" required />
+
+            <label for="eventType">Event Type:</label>
+            <select id="eventType" name="eventType" required>
+                <option value="" disabled selected>Select an event</option>
+                <option value="seminar">Seminar</option>
+                <option value="workshop">Workshop</option>
+                <option value="festival">Festival</option>
+                <option value="community_meeting">Community Meeting</option>
+            </select>
+
+            <button type="submit">Submit Registration</button>
+            <button type="button" id="clearPrefsButton" title="Clear saved preferences">Clear Preferences</button>
+
+            <output id="formOutput" for="registrationForm"></output>
+        </form>
+    </section>
+
+    <section id="feedback">
+        <h2>Event Feedback</h2>
+        <form id="feedbackForm">
+            <label for="phone">Phone Number:</label>
+            <input type="text" id="phone" name="phone" placeholder="e.g. 123-456-7890" onblur="validatePhone()" />
+
+            <div id="phoneError">Please enter a valid phone number (e.g. 123-456-7890).</div>
+
+            <label for="eventSelect">Select Event:</label>
+            <select id="eventSelect" name="eventSelect" onchange="displayFee()">
+                <option value="" disabled selected>Select an event</option>
+                <option value="seminar" data-fee="50">Seminar</option>
+                <option value="workshop" data-fee="75">Workshop</option>
+                <option value="festival" data-fee="30">Festival</option>
+                <option value="community_meeting" data-fee="Free">Community Meeting</option>
+            </select>
+
+            <div id="eventFee"></div>
+
+            <label for="feedbackMessage">Feedback:</label>
+            <textarea id="feedbackMessage" name="feedbackMessage" rows="5" placeholder="Your feedback here..." onkeydown="countChars()" onkeyup="countChars()" onkeypress="countChars()"></textarea>
+            <div id="charCount">Characters: 0</div>
+
+            <button type="button" onclick="submitFeedback()">Submit Feedback</button>
+        </form>
+    </section>
+
+    <section id="geolocationSection">
+        <h2>Find Nearby Events</h2>
+        <button id="findNearbyBtn">Find Nearby Events</button>
+        <div id="geoOutput"></div>
+        <div id="geoError"></div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2023 Local Community Event Portal. All rights reserved.</p>
+</footer>
+
+<script>
+    // Debug mode functionality
+    const debugMode = {
+        active: false,
+        toggle() {
+            this.active = !this.active;
+            const debugInfo = document.getElementById('debugInfo');
+            const toggleBtn = document.getElementById('toggleDebug');
+            
+            if (this.active) {
+                debugInfo.style.display = 'block';
+                toggleBtn.style.background = '#dc3545';
+                toggleBtn.textContent = 'Debug ON';
+                console.log('%cDEBUG MODE ACTIVATED', 'color: red; font-weight: bold;');
+                this.log('Debug mode activated');
+            } else {
+                debugInfo.style.display = 'none';
+                toggleBtn.style.background = '#333';
+                toggleBtn.textContent = 'Debug Mode';
+                console.log('Debug mode deactivated');
+            }
+        },
+        log(message) {
+            if (!this.active) return;
+            
+            const debugInfo = document.getElementById('debugInfo');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `[${timestamp}] ${message}<br>`;
+            console.debug(`[DEBUG] ${message}`);
+            
+            // Auto-scroll to bottom
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+    };
+
+    // Debug controls setup
+    document.getElementById('toggleDebug').addEventListener('click', () => debugMode.toggle());
+    
+    document.getElementById('toggleOutlines').addEventListener('click', () => {
+        document.body.classList.toggle('debug-outline');
+        debugMode.log('Toggled element outlines');
+    });
+    
+    document.getElementById('toggleGrid').addEventListener('click', () => {
+        document.body.classList.toggle('debug-grid');
+        debugMode.log('Toggled debug grid');
+    });
+
+    // Save preferred event type on change in registration form and load on page load
+    const eventTypeSelect = document.getElementById('eventType');
+    const clearPrefsButton = document.getElementById('clearPrefsButton');
+
+    // Load saved preference on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        debugMode.log('DOM fully loaded and parsed');
+        const savedEvent = localStorage.getItem('preferredEventType');
+        if (savedEvent) {
+            // Select saved option if it exists
+            for (let option of eventTypeSelect.options) {
+                if (option.value === savedEvent) {
+                    option.selected = true;
+                    debugMode.log(`Loaded preferred event type from storage: ${savedEvent}`);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Save selection when changed
+    eventTypeSelect.addEventListener('change', () => {
+        if (eventTypeSelect.value) {
+            localStorage.setItem('preferredEventType', eventTypeSelect.value);
+            sessionStorage.setItem('preferredEventTypeSession', eventTypeSelect.value);
+            debugMode.log(`Saved event type preference: ${eventTypeSelect.value}`);
+        }
+    });
+
+    // Clear localStorage & sessionStorage preference
+    clearPrefsButton.addEventListener('click', () => {
+        localStorage.removeItem('preferredEventType');
+        sessionStorage.removeItem('preferredEventTypeSession');
+        eventTypeSelect.selectedIndex = 0; // Reset to placeholder
+        debugMode.log('Cleared all saved preferences');
+        alert('Your preferences have been cleared.');
+    });
+
+    // Registration form submission
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+        debugBreakpoint('Form submission started');
+        event.preventDefault();
+
+        const name = this.name.value.trim();
+        const email = this.email.value.trim();
+        const date = this.date.value;
+        const eventTypeText = this.eventType.options[this.eventType.selectedIndex].text;
+        const message = this.message ? this.message.value.trim() : '';
+
+        debugMode.log('Registration form submitted with values:');
+        debugMode.log(`Name: ${name}`);
+        debugMode.log(`Email: ${email}`);
+        debugMode.log(`Date: ${date}`);
+        debugMode.log(`Event Type: ${eventTypeText}`);
+        if (message) debugMode.log(`Message: ${message}`);
+
+        let confirmationMessage = `Thank you, ${name}, for registering for the ${eventTypeText} on ${date}.`;
+        if (message) {
+            confirmationMessage += `\nYour message: "${message}"`;
+        }
+
+        const output = document.getElementById('formOutput');
+        output.textContent = confirmationMessage;
+        debugMode.log('Registration successful');
+
+        this.reset();
+        this.name.focus();
+
+        // Remove saved preferences on form submit
+        localStorage.removeItem('preferredEventType');
+        sessionStorage.removeItem('preferredEventTypeSession');
+    });
+
+    // Phone validation on blur
+    function validatePhone() {
+        debugMode.log('Validating phone number');
+        const phoneInput = document.getElementById('phone');
+        const phoneError = document.getElementById('phoneError');
+        const phonePattern = /^\d{3}-\d{3}-\d{4}$/;
+        
+        if (phoneInput.value.trim() === '' || phonePattern.test(phoneInput.value.trim())) {
+            phoneError.style.display = 'none';
+            debugMode.log('Phone number validation passed');
+            return true;
+        } else {
+            phoneError.style.display = 'block';
+            phoneInput.focus();
+            debugMode.log('Phone number validation failed');
+            return false;
+        }
+    }
+
+    // Display event fee onchange in feedback form
+    function displayFee() {
+        const select = document.getElementById('eventSelect');
+        const feeDisplay = document.getElementById('eventFee');
+        const selectedOption = select.options[select.selectedIndex];
+        const fee = selectedOption.getAttribute('data-fee');
+        if (fee) {
+            feeDisplay.textContent = 'Event Fee: ' + fee;
+            debugMode.log(`Displayed fee for ${selectedOption.text}: ${fee}`);
+        } else {
+            feeDisplay.textContent = '';
+        }
+    }
+
+    // Submit feedback button onclick confirmation
+    function submitFeedback() {
+        debugBreakpoint('Feedback submission started');
+        if (!validatePhone()) {
+            debugMode.log('Feedback submission aborted - invalid phone number');
+            return;
+        }
+        const select = document.getElementById('eventSelect');
+        if (!select.value) {
+            alert('Please select an event.');
+            select.focus();
+            debugMode.log('Feedback submission aborted - no event selected');
+            return;
+        }
+        
+        const feedbackText = document.getElementById('feedbackMessage').value;
+        debugMode.log(`Submitting feedback for ${select.options[select.selectedIndex].text}: ${feedbackText.substring(0, 20)}...`);
+        
+        alert('Thank you for your feedback!');
+        document.getElementById('feedbackForm').reset();
+        document.getElementById('charCount').textContent = 'Characters: 0';
+        document.getElementById('eventFee').textContent = '';
+        debugMode.log('Feedback submitted successfully');
+    }
+
+    // Image double click to enlarge toggle
+    function toggleImageSize(imgElement) {
+        imgElement.classList.toggle('enlarged');
+        debugMode.log(`Toggled image size for ${imgElement.alt}`);
+    }
+
+    // Feedback textarea character count on key events
+    function countChars() {
+        const feedback = document.getElementById('feedbackMessage');
+        const countDisplay = document.getElementById('charCount');
+        const count = feedback.value.length;
+        countDisplay.textContent = `Characters: ${count}`;
+        
+        // Debug logging only when count changes significantly
+        if (count % 10 === 0 || count < 10) {
+            debugMode.log(`Character count updated: ${count}`);
+        }
+    }
+
+    // Video oncanplay event handler
+    function showVideoReadyMessage() {
+        document.getElementById('videoStatus').textContent = 'Video ready to play';
+        debugMode.log('Video loaded and ready to play');
+    }
+
+    // Warn on before unload if form has unsaved data
+    window.addEventListener('beforeunload', function (e) {
+        const registrationForm = document.getElementById('registrationForm');
+        const feedbackForm = document.getElementById('feedbackForm');
+
+        const regHasData = [...registrationForm.elements].some(input => {
+            if (input.type === 'submit' || input.type === 'button' || input.tagName.toLowerCase() === 'output') {
+                return false;
+            }
+            return input.value.trim() !== '';
+        });
+
+        const feedHasData = [...feedbackForm.elements].some(input => {
+            if (input.type === 'submit' || input.type === 'button' || input.tagName.toLowerCase() === 'output') {
+                return false;
+            }
+            return input.value.trim() !== '';
+        });
+
+        if (regHasData || feedHasData) {
+            debugMode.log('Warning user about unsaved form data before page unload');
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    // Geolocation functionality
+    const geoOutput = document.getElementById('geoOutput');
+    const geoError = document.getElementById('geoError');
+    const findNearbyBtn = document.getElementById('findNearbyBtn');
+
+    findNearbyBtn.addEventListener('click', () => {
+        debugBreakpoint('Geolocation request initiated');
+        geoOutput.textContent = '';
+        geoError.textContent = '';
+
+        if (!navigator.geolocation) {
+            geoError.textContent = 'Geolocation is not supported by your browser.';
+            debugMode.log('Geolocation not supported by browser');
+            return;
+        }
+
+        debugMode.log('Requesting geolocation...');
+        navigator.geolocation.getCurrentPosition(success, error, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        });
+    });
+
+    function success(position) {
+        const latitude = position.coords.latitude.toFixed(6);
+        const longitude = position.coords.longitude.toFixed(6);
+        geoOutput.textContent = `Your current location:\nLatitude: ${latitude}\nLongitude: ${longitude}`;
+        geoError.textContent = '';
+        debugMode.log(`Geolocation success: Lat ${latitude}, Long ${longitude}`);
+    }
+
+    function error(err) {
+        debugMode.log(`Geolocation error: ${err.code} - ${err.message}`);
+        switch(err.code) {
+            case err.PERMISSION_DENIED:
+                geoError.textContent = 'Error: Permission denied. Please allow location access.';
+                debugMode.log('User denied geolocation permission');
+                break;
+            case err.TIMEOUT:
+                geoError.textContent = 'Error: Request timed out. Please try again.';
+                debugMode.log('Geolocation request timed out');
+                break;
+            case err.POSITION_UNAVAILABLE:
+                geoError.textContent = 'Error: Position unavailable.';
+                debugMode.log('Position information unavailable');
+                break;
+            default:
+                geoError.textContent = 'An unknown error occurred.';
+                debugMode.log('Unknown geolocation error');
+                break;
+        }
+        geoOutput.textContent = '';
+    }
+
+    // Add breakpoint triggers for VS Code debugging
+    function debugBreakpoint(label = 'Breakpoint') {
+        debugMode.log(`Breakpoint reached: ${label}`);
+        console.log(`%cBREAKPOINT: ${label}`, 'color: blue; font-weight: bold;');
+        // This creates a visual breakpoint in Chrome DevTools
+        debugger;
+    }
+
+    // Initial debug message
+    debugMode.log('Application initialized');
+</script>
+</body>
+</html>
